@@ -11,21 +11,26 @@ public class RobotAccess {
 		Robot robot = new Robot(intro()); 
 		robot.place();
 		
-		do {
+		while(true)
 			robot.getCommand();
-		} while(true);
 	}
 	
 	public static String intro() {
-		String name = null;
-		try {
-			name = Input.getInputString("Hello there. I am... I am... who am I? (Enter robot's name) ");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String name = "";
+		
+		while (name.length() == 0) {
+			try {
+				name = Input.getInputString("Hello there. I am... I am... who am I? (Enter robot's name) ");
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			}
+			
+			if (name.length() == 0) {
+				System.out.println("?: Please give me a proper name.");
+			}
 		}
 		
-		System.out.println(name + ": I am " + name + "? What a weird name. Anyways, what is my purpose? ");
+		System.out.println("\n" + name + ": I am " + name + "? What a weird name. Anyways, what is my purpose? ");
 		
 		try {
 			Input.waitForReturnKey("Press enter to continue...");
