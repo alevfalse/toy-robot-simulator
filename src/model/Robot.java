@@ -1,113 +1,67 @@
 package model;
 
-import utility.Input;
-import java.io.IOException;
-
 /**
  * Robot Model Object
  */
 public class Robot {
 	
-	private String name;
 	private int x_position;
 	private int y_position;
 	private int f_direction;
+	private boolean placed;
 
-	public Robot(String inputName) {
-		this.name = inputName;
-		this.x_position = 0;
-		this.y_position = 0;
-		this.f_direction = 0;
+	public Robot() {
+		this.placed = false;
 	}
 	
-	public void getCommand() {
+	public void place(String command) {
 		
-		int command = 0;
+		String[] args;
 		
-		System.out.println("\nCommands for " + this.name + ":");
-		System.out.println("1] Place");
-		System.out.println("2] Move");
-		System.out.println("3] Left");
-		System.out.println("4] Right");
-		System.out.println("5] Report");
-		
-		// keep asking while the command number entered is invalid
-		while (command < 1 || command > 5) {
-			try {
-				command = Input.getInputInteger("Enter the number of your command: ");
-			} catch (NumberFormatException | IOException e) {
-				System.err.println(e.getMessage());
-			}
-			
-			if (command < 1 || command > 5) System.out.println("Invalid command number. Please enter again.");
+		try {
+			args = command.substring(command.indexOf("E")+2).split(",");
+		} catch(StringIndexOutOfBoundsException ex) {
+			return;
 		}
 		
-		switch(command)
+		if (args.length > 3 || args.length <= 0) return;
+		
+		int x, y;
+		try {
+			x = Integer.parseInt(args[0]);
+			y = Integer.parseInt(args[1]);
+		} catch (NumberFormatException e) {
+			return;
+		}
+		
+		if (x != 0 && x != 1 && x != 2 && x!= 3) return;
+		if (y != 0 && y != 1 && y != 2 && y!= 3) return;
+		
+		switch(args[2]) 
 		{
-		case 1: place();  break;
-		case 2: move();   break;
-		case 3: left();   break;
-		case 4: right();  break;
-		case 5: report(); break;
-		default: getCommand();
+		case "NORTH": this.f_direction = 0; break;
+		case "EAST":  this.f_direction = 1; break;
+		case "SOUTH": this.f_direction = 2; break;
+		case "WEST":  this.f_direction = 3; break;
+		default: return;
 		}
 		
-		return;
-	}
-	
-	public void place() {
-	
-		do {
-			try {
-				this.x_position = Input.getInputInteger("\nEnter Position X: ");
-			} catch (NumberFormatException | IOException e) {
-				System.err.println(e.getMessage());
-				return;
-			}
-			
-			if (this.x_position < 0 || this.x_position > 4)
-				System.out.println(this.name + ": Invalid Position X. Please enter again.");
-			
-		} while (this.x_position < 0 || this.x_position > 4);
+		this.x_position = x;
+		this.y_position = y;
 		
-		do {
-			try {
-				this.y_position = Input.getInputInteger("Enter Position Y: ");
-			} catch (NumberFormatException | IOException e) {
-				System.err.println(e.getMessage());
-			}
-			
-			if (this.y_position < 0 || this.y_position > 4)
-				System.out.println(this.name + ": Invalid Position Y. Please enter again.");
-			
-		} while (this.y_position < 0 || this.y_position > 4);
-			
-		do {
-			try {
-				System.out.println("Directions: \n1] North \n2] East \n3] South \n4] West");
-				this.f_direction = Input.getInputInteger("Enter number of direction: ")-1; // get the number and subtract 1
-			} catch (NumberFormatException | IOException e) {
-				System.err.println(e.getMessage());
-			}
-			
-			if (this.f_direction < 0 || this.f_direction > 3)
-				System.out.println(this.name + ": Invalid Face Direction number. Please enter again.");
-			
-		} while(this.f_direction < 0 || this.f_direction > 3);
-		
-		return;
+		this.placed = true;
 	}
 	
 	
 	public void move() {
-		System.out.println("Moving forward...");
+		if (!this.placed) return;
+		
 		switch(this.f_direction) 
 		{
 		case 0: // NORTH
 			this.y_position += 1;
 				
 			if (y_position > 4) {
-				System.out.println("Woops.. I almost fell off table.");
 				y_position -= 1;
 			}
 			break;
@@ -116,7 +70,6 @@ public class Robot {
 			this.x_position += 1;
 			
 			if (x_position > 4) {
-				System.out.println("Woops.. I almost fell off table.");
 				x_position -= 1;
 			}
 			break;
@@ -125,7 +78,6 @@ public class Robot {
 			this.y_position -= 1;
 			
 			if (y_position < 0) {
-				System.out.println("Woops.. I almost fell off table.");
 				y_position += 1;
 			}
 			break;
@@ -134,7 +86,6 @@ public class Robot {
 			this.x_position -= 1;
 			
 			if (x_position < 0) {
-				System.out.println("Woops.. I almost fell off table.");
 				x_position += 1;
 			}
 			break;
@@ -143,8 +94,9 @@ public class Robot {
 	
 	
 	// rotates the robot to the left
-	public void left() {
-		System.out.println("Rotating to the left...");
+	public void rotateLeft() {
+		if (!this.placed) return;
+		
 		this.f_direction -= 1;
 		
 		if (this.f_direction < 0) {
@@ -154,10 +106,10 @@ public class Robot {
 		return;
 	}
 	
-	
 	// rotates the robot to the right
-	public void right() {
-		System.out.println("Rotating to the right...");
+	public void rotateRight() {
+		if (!this.placed) return;
+		
 		this.f_direction += 1;
 		
 		if (this.f_direction > 3) {
@@ -166,64 +118,32 @@ public class Robot {
 		
 		return;
 	}
-	
-	
-	// prints the position and the direction of the robot is facing
-	public void report() {
-		
-		System.out.println("\nReporting position...\n<-- X - Y ----- F -->");
-		System.out.println("    " + this.x_position + "   " + this.y_position + "     " + getDirectionString() + "\n");
-		
-		System.out.println("   0   1   2   3   4 ");
-		System.out.println("  --- --- --- --- ---");
-		
-		
-		
-		for (int y=4; y >= 0; y--) {
-			if (y == this.y_position) {
-				System.out.print("   ");
-				for(int x=0; x<= 4; x++) {
-					if (x == this.x_position) {
-						System.out.print(getIcon());
-					} else {
-						System.out.print("    ");
-					}
-					if (x==4) System.out.print(" | " + y + "\n\n");
-				}
-				
-			} else {
-				System.out.println("                     | " + y + "\n");
-			}
-		}
-		return;
-	}
-	
-	private String getDirectionString() {
-		
-		String direction = "";
-		
-		switch (this.f_direction)
-		{
-		case 0: direction = "NORTH"; break;
-		case 1: direction = "EAST";  break;
-		case 2: direction = "SOUTH"; break;
-		case 3: direction = "WEST";  break;
-		}
-		
-		return direction;
-	}
-	
-	private char getIcon() {
-		char icon = ' ';
-		switch (this.f_direction)
-		{
-		case 0: icon = '^'; break; // NORTH
-		case 1: icon = '>'; break; // EAST
-		case 2: icon = 'v'; break; // SOUTH
-		case 3: icon = '<'; break; // WEST
-		}
-		
-		return icon;
+
+	public int getX_position() {
+		return x_position;
 	}
 
+	public void setX_position(int x_position) {
+		this.x_position = x_position;
+	}
+
+	public int getY_position() {
+		return y_position;
+	}
+
+	public void setY_position(int y_position) {
+		this.y_position = y_position;
+	}
+
+	public int getF_direction() {
+		return f_direction;
+	}
+
+	public void setF_direction(int f_direction) {
+		this.f_direction = f_direction;
+	}
+	
+	public boolean isPlaced() {
+		return this.placed;
+	}
 }
