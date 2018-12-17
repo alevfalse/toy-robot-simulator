@@ -8,7 +8,6 @@ public class RobotController {
 	
 	private Robot robot;
 	private RobotView view;
-	private String command;
 
 	public RobotController(Robot robot, RobotView view) {
 		this.robot = robot;
@@ -24,15 +23,13 @@ public class RobotController {
 			if (command.startsWith("PLACE")) 
 				robot.place(command);
 			else {
+				if (!robot.isPlaced()) continue;
 				switch(command)
 				{
-				case "MOVE":  robot.move(); break;
-				case "LEFT":  robot.rotateLeft(); break;
-				case "RIGHT": robot.rotateRight(); break;
-				case "REPORT": 
-					if (robot.isPlaced()) 
-						view.printReport(robot); 
-					break;
+				case "MOVE"  : robot.move(); break;
+				case "LEFT"  : robot.rotateLeft(); break;
+				case "RIGHT" : robot.rotateRight(); break;
+				case "REPORT": view.printReport(robot); break;
 				}
 			}
 		}

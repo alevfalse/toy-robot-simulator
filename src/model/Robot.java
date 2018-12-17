@@ -40,9 +40,9 @@ public class Robot {
 		switch(args[2]) 
 		{
 		case "NORTH": this.f_direction = 0; break;
-		case "EAST":  this.f_direction = 1; break;
+		case "EAST" : this.f_direction = 1; break;
 		case "SOUTH": this.f_direction = 2; break;
-		case "WEST":  this.f_direction = 3; break;
+		case "WEST" : this.f_direction = 3; break;
 		default: return;
 		}
 		
@@ -54,69 +54,40 @@ public class Robot {
 	
 	
 	public void move() {
-		if (!this.placed) return;
-		
 		switch(this.f_direction) 
 		{
 		case 0: // NORTH
+			if (y_position == 3) return;
 			this.y_position += 1;
-				
-			if (y_position > 4) {
-				y_position -= 1;
-			}
 			break;
 		
 		case 1: // EAST
+			if (x_position == 3) return;
 			this.x_position += 1;
-			
-			if (x_position > 4) {
-				x_position -= 1;
-			}
 			break;
 			
 		case 2: // SOUTH
+			if (y_position == 0) return;
 			this.y_position -= 1;
-			
-			if (y_position < 0) {
-				y_position += 1;
-			}
 			break;
 			
 		case 3: // WEST
+			if (x_position == 0) return;
 			this.x_position -= 1;
-			
-			if (x_position < 0) {
-				x_position += 1;
-			}
 			break;
 		}
 	}
 	
-	
 	// rotates the robot to the left
 	public void rotateLeft() {
-		if (!this.placed) return;
-		
 		this.f_direction -= 1;
-		
-		if (this.f_direction < 0) {
-			this.f_direction = 3; // WEST
-		}
-		
-		return;
+		if (this.f_direction < 0) this.f_direction = 3; // WEST
 	}
 	
 	// rotates the robot to the right
 	public void rotateRight() {
-		if (!this.placed) return;
-		
 		this.f_direction += 1;
-		
-		if (this.f_direction > 3) {
-			this.f_direction = 0; // NORTH
-		}
-		
-		return;
+		if (this.f_direction > 3) this.f_direction = 0; // NORTH
 	}
 
 	public int getX_position() {
